@@ -11,14 +11,45 @@ export default function AdminDashboard({ jobs, apps, users, onUpdateStatus, onUp
   const [editJob,  setEditJob]  = useState(null);
   const [viewApp,  setViewApp]  = useState(null);
 
+  /* ─── Dynamic Calculations ─── */
+  const totalJobs   = jobs.length;
+  const totalApps   = apps.length;
+  const totalUsers  = users.length;
+  const activeUsers = users.filter(u => u.role === "user" && u.status === "Approved").length;
+  const recruiters  = users.filter(u => u.role === "recruiter").length;
+  const pending     = users.filter(u => u.status === "Pending").length;
+  const blocked     = users.filter(u => u.status === "Blocked").length;
+
   const stats = [
-    { l: "Total Jobs",     v: jobs.length,                                  i: "📋", c: T.teal   },
-    { l: "Applications",   v: apps.length,                                  i: "👥", c: T.blue   },
-    { l: "Active Seekers", v: users.filter(u => u.role === "user").length,  i: "🛡️", c: T.green  },
-    { l: "Recruiters",     v: users.filter(u => u.role === "recruiter").length, i: "🏢", c: T.purple },
-    { l: "Pending Users",  v: users.filter(u => u.status === "Pending").length, i: "⏳", c: T.amber  },
-    { l: "Blocked Users",  v: users.filter(u => u.status === "Blocked").length, i: "🚫", c: T.red    },
+    { l: "Total Jobs",     v: totalJobs,   i: "📋", c: T.teal   },
+    { l: "Applications",   v: totalApps,   i: "👥", c: T.blue   },
+    { l: "Active Seekers", v: activeUsers, i: "🛡️", c: T.green  },
+    { l: "Recruiters",     v: recruiters,  i: "🏢", c: T.purple },
+    { l: "Pending Users",  v: pending,     i: "⏳", c: T.amber  },
+    { l: "Blocked Users",  v: blocked,     i: "🚫", c: T.red    },
   ];
+
+  /* ── Monthly Job Postings (Real Data) ── */
+  const months = ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"];
+  const jobMonthCounts = months.map((m, i) => {
+    // Current year assumed 2026 based on seed
+    const mIdx = (9 + i) % 12 + 1; // Oct is 10, Nov 11...
+    const count = jobs.filter(j => {
+      if (!j.posted) return false;
+      const jMonth = parseInt(j.posted.split("-")[1], 10);
+      return jMonth === mIdx;
+    }).length;
+    return count;
+  });
+  const maxJobs = Math.max(...jobMonthCounts, 10);
+
+  /* ── Recruiter Analytics ── */
+  // Group apps by job and then by recruiter (simulation: group by dept)
+  const deptStats = Array.from(new Set(jobs.map(j => j.dept))).map(d => {
+    const dJobs = jobs.filter(j => j.dept === d);
+    const dApps = apps.filter(a => dJobs.some(j => j.id === a.jobId));
+    return { n: d, j: dJobs.length, a: dApps.length };
+  }).sort((a, b) => b.a - a.a).slice(0, 3);
 
   const updateStatus = (id, s) => { onUpdateStatus(id, s); toast.add(`Status → ${s}`, "success"); };
 
@@ -63,8 +94,8 @@ export default function AdminDashboard({ jobs, apps, users, onUpdateStatus, onUp
               <Card sx={{ padding: 24 }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: T.greyMd, mb: 16, textTransform: "uppercase" }}>Monthly Job Postings</div>
                 <div style={{ display: "flex", alignItems: "flex-end", height: 120, gap: 10, padding: "0 10px" }}>
-                  {[34, 45, 28, 52, 61, 48].map((h, i) => (
-                    <div key={i} style={{ flex: 1, background: T.tealLt, height: `${h}%`, borderRadius: "4px 4px 0 0", position: "relative" }}>
+                  {jobMonthCounts.map((h, i) => (
+                    <div key={i} style={{ flex: 1, background: T.tealLt, height: `${(h / maxJobs) * 100}%`, borderRadius: "4px 4px 0 0", minHeight: h > 0 ? 4 : 0, position: "relative" }}>
                       <div style={{ position: "absolute", top: -20, left: 0, right: 0, textAlign: "center", fontSize: 10, fontWeight: 700, color: T.teal }}>{h}</div>
                     </div>
                   ))}
@@ -98,13 +129,9 @@ export default function AdminDashboard({ jobs, apps, users, onUpdateStatus, onUp
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 20, marginBottom: 36 }}>
               {/* Recruiter Leaderboard */}
               <Card sx={{ padding: 24 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: T.greyMd, mb: 16, textTransform: "uppercase" }}>Most Active Recruiters</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: T.greyMd, mb: 16, textTransform: "uppercase" }}>Key Department Performance</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  {[
-                    { n: "Global Recruiters", j: 12, a: 145 },
-                    { n: "Tech Talent Co",    j: 8,  a: 92  },
-                    { n: "HR Catalyst Corp",  j: 5,  a: 48  }
-                  ].map((r, i) => (
+                  {deptStats.map((r, i) => (
                     <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 700 }}>{r.n}</div>
