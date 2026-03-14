@@ -3,30 +3,53 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const path = require('path');
+const helmet = require('helmet');
+const morgan = require('morgan');
 require('dotenv').config();
 
 const app  = express();
 const port = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Middleware
-app.use(cors());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for simplicity in this project, or configure properly
+}));
+app.use(morgan(isProduction ? 'combined' : 'dev'));
+
+// CORS Configuration
+const corsOptions = {
+  origin: isProduction 
+    ? [process.env.FRONTEND_URL].filter(Boolean) 
+    : ['http://localhost:3000', 'http://localhost:3001'],
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Postgres Connection — uses .env credentials
-const pool = new Pool({
-  host:     process.env.DB_HOST     || 'localhost',
-  port:     Number(process.env.DB_PORT) || 5432,
-  database: process.env.DB_NAME     || 'recipes_db',
-  user:     process.env.DB_USER     || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres123',
-});
+// Postgres Connection
+const poolConfig = process.env.DATABASE_URL 
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: isProduction ? { rejectUnauthorized: false } : false
+    }
+  : {
+      host:     process.env.DB_HOST     || 'localhost',
+      port:     Number(process.env.DB_PORT) || 5432,
+      database: process.env.DB_NAME     || 'hr-catalyst',
+      user:     process.env.DB_USER     || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres123',
+    };
+
+const pool = new Pool(poolConfig);
 
 // Test connection on startup
 pool.connect((err, client, done) => {
   if (err) {
     console.error('❌ PostgreSQL connection error:', err.message);
   } else {
-    console.log('✅ Connected to PostgreSQL database:', process.env.DB_NAME);
+    console.log('✅ Connected to PostgreSQL database');
     done();
   }
 });
@@ -162,6 +185,22 @@ app.put('/api/apps/:id/status', authenticate, async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Static files in production (disabled on Vercel to let CDN handle it)
+if (isProduction && !process.env.VERCEL) {
+  const buildPath = path.join(__dirname, '..', 'build');
+  app.use(express.static(buildPath));
+  
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+}
+
+// Only start the server if this file is run directly
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port} in ${isProduction ? 'production' : 'development'} mode`);
+  });
+}
+
+// Export the app for Vercel serverless functions
+module.exports = app;

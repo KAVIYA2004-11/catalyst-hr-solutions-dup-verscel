@@ -17,7 +17,7 @@ import MyAppsPage       from "./pages/MyAppsPage";
 import AdminDashboard   from "./pages/AdminDashboard";
 import ProfilePage      from "./pages/ProfilePage";
 
-const API_URL  = "http://localhost:3001/api";
+const API_URL  = process.env.REACT_APP_API_URL || "/api";
 const LS_PAGE  = "catalyst_page";
 const LS_JOB   = "catalyst_jobid";
 const LS_USERS = "catalyst_users";
