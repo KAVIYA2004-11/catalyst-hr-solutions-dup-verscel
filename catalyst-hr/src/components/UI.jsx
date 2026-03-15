@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { T } from "../data/config";
 
 /* ─── Button ────────────────────────────────────────────────── */
@@ -202,7 +203,7 @@ export function Modal({ open, onClose, title, children, footer, width = 560 }) {
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
       className="modal-wrap"
       onClick={onClose}
@@ -269,7 +270,8 @@ export function Modal({ open, onClose, title, children, footer, width = 560 }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
