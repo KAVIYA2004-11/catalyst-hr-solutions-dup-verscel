@@ -208,9 +208,13 @@ export function Modal({ open, onClose, title, children, footer, width = 560 }) {
       className="modal-wrap"
       onClick={onClose}
       style={{
-        position: "fixed", inset: 0,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
         background: "rgba(0,0,0,.55)",
-        zIndex: 1000,
+        zIndex: 9999,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
