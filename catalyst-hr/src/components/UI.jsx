@@ -197,8 +197,18 @@ export function FileField({ label, onChange, req = false, ph = "", hint, err }) 
 /* ─── Modal ─────────────────────────────────────────────────── */
 export function Modal({ open, onClose, title, children, footer, width = 560 }) {
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (open) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "0px";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "0px";
+    };
   }, [open]);
 
   if (!open) return null;
@@ -211,14 +221,15 @@ export function Modal({ open, onClose, title, children, footer, width = 560 }) {
         position: "fixed",
         top: 0,
         left: 0,
-        width: "100vw",
-        height: "100vh",
+        right: 0,
+        bottom: 0,
         background: "rgba(0,0,0,.55)",
         zIndex: 9999,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: 16,
+        overscrollBehavior: "contain",
       }}
     >
       <div
