@@ -1,29 +1,29 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { JOBS, APPS_SEED, INITIAL_USERS } from "./data/jobs";
-import { injectStyles }             from "./utils/styles";
-import { useToast }                 from "./hooks/useToast";
+import { injectStyles } from "./utils/styles";
+import { useToast } from "./hooks/useToast";
 
-import Navbar           from "./components/Navbar";
-import Footer           from "./components/Footer";
-import { Toast }        from "./components/UI";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import { Toast } from "./components/UI";
 
-import AuthPage         from "./pages/AuthPage";
-import HomePage         from "./pages/HomePage";
-import JobsPage         from "./pages/JobsPage";
-import JobDetailPage    from "./pages/JobDetailPage";
-import AboutPage        from "./pages/AboutPage";
-import ContactPage      from "./pages/ContactPage";
-import MyAppsPage       from "./pages/MyAppsPage";
-import AdminDashboard   from "./pages/AdminDashboard";
-import ProfilePage      from "./pages/ProfilePage";
+import AuthPage from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
+import JobsPage from "./pages/JobsPage";
+import JobDetailPage from "./pages/JobDetailPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import MyAppsPage from "./pages/MyAppsPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProfilePage from "./pages/ProfilePage";
 
-const API_URL  = process.env.REACT_APP_API_URL || "/api";
-const LS_PAGE  = "catalyst_page";
-const LS_JOB   = "catalyst_jobid";
+const API_URL = process.env.REACT_APP_API_URL || "/api";
+const LS_PAGE = "catalyst_page";
+const LS_JOB = "catalyst_jobid";
 const LS_USERS = "catalyst_users";
-const LS_APPS  = "catalyst_apps";
-const LS_JOBS  = "catalyst_jobs";
-const LS_USER  = "catalyst_user";
+const LS_APPS = "catalyst_apps";
+const LS_JOBS = "catalyst_jobs";
+const LS_USER = "catalyst_user";
 const LS_TOKEN = "catalyst_token";
 
 /* ── Helpers ─────────────────────────────────────────────────── */
@@ -31,7 +31,7 @@ const load = (key, fallback) => {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
 };
 const save = (key, val) => {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch { }
 };
 
 export default function App() {
@@ -41,13 +41,13 @@ export default function App() {
   const savedUser = load(LS_USER, null);
   const defaultPage = savedUser?.role === "admin" ? "admin" : (load(LS_PAGE, "home") || "home");
 
-  const [page,     setPageState] = useState(defaultPage);
-  const [jobId,    setJobId]     = useState(() => load(LS_JOB, null));
-  const [authMode, setAuthMode]  = useState(null);
-  const [user,     setUser]      = useState(savedUser);
+  const [page, setPageState] = useState(defaultPage);
+  const [jobId, setJobId] = useState(() => load(LS_JOB, null));
+  const [authMode, setAuthMode] = useState(null);
+  const [user, setUser] = useState(savedUser);
 
-  const [jobs,  setJobsFn]  = useState(() => load(LS_JOBS,  JOBS));
-  const [apps,  setAppsFn]  = useState(() => load(LS_APPS,  APPS_SEED));
+  const [jobs, setJobsFn] = useState(() => load(LS_JOBS, JOBS));
+  const [apps, setAppsFn] = useState(() => load(LS_APPS, APPS_SEED));
   const [users, setUsersFn] = useState(() => load(LS_USERS, INITIAL_USERS));
 
   const toast = useToast();
@@ -73,35 +73,35 @@ export default function App() {
       channel.onmessage = (msg) => {
         if (!msg?.data?.type) return;
         const { type, data } = msg.data;
-        if (type === "apps")  setAppsFn(data);
-        if (type === "jobs")  setJobsFn(data);
+        if (type === "apps") setAppsFn(data);
+        if (type === "jobs") setJobsFn(data);
         if (type === "users") setUsersFn(data);
       };
-    } catch {}
+    } catch { }
 
     // Also handle cross-window (different browser windows)
     const storageHandler = (e) => {
-      if (e.key === LS_APPS  && e.newValue) setAppsFn(JSON.parse(e.newValue));
-      if (e.key === LS_JOBS  && e.newValue) setJobsFn(JSON.parse(e.newValue));
+      if (e.key === LS_APPS && e.newValue) setAppsFn(JSON.parse(e.newValue));
+      if (e.key === LS_JOBS && e.newValue) setJobsFn(JSON.parse(e.newValue));
       if (e.key === LS_USERS && e.newValue) setUsersFn(JSON.parse(e.newValue));
     };
     window.addEventListener("storage", storageHandler);
 
     return () => {
-      try { channel?.close(); } catch {}
+      try { channel?.close(); } catch { }
       window.removeEventListener("storage", storageHandler);
     };
   }, []); // one-time setup only
 
   // ── Broadcast helper ────────────────────────────────────────────
   const broadcast = useCallback((type, data) => {
-    try { bc.current?.postMessage({ type, data }); } catch {}
+    try { bc.current?.postMessage({ type, data }); } catch { }
   }, []);
 
   // ── Persistent setters: save + broadcast on every change ────────
-  const setJobs  = useCallback(upd => setJobsFn(prev  => { const n = typeof upd === "function" ? upd(prev)  : upd; save(LS_JOBS,  n); broadcast("jobs",  n); return n; }), [broadcast]);
-  const setApps  = useCallback(upd => setAppsFn(prev  => { const n = typeof upd === "function" ? upd(prev)  : upd; save(LS_APPS,  n); broadcast("apps",  n); return n; }), [broadcast]);
-  const setUsers = useCallback(upd => setUsersFn(prev => { const n = typeof upd === "function" ? upd(prev)  : upd; save(LS_USERS, n); broadcast("users", n); return n; }), [broadcast]);
+  const setJobs = useCallback(upd => setJobsFn(prev => { const n = typeof upd === "function" ? upd(prev) : upd; save(LS_JOBS, n); broadcast("jobs", n); return n; }), [broadcast]);
+  const setApps = useCallback(upd => setAppsFn(prev => { const n = typeof upd === "function" ? upd(prev) : upd; save(LS_APPS, n); broadcast("apps", n); return n; }), [broadcast]);
+  const setUsers = useCallback(upd => setUsersFn(prev => { const n = typeof upd === "function" ? upd(prev) : upd; save(LS_USERS, n); broadcast("users", n); return n; }), [broadcast]);
 
   // ── Optional backend sync (graceful fallback) ────────────────────
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function App() {
         if (jRes.ok) { const d = await jRes.json(); if (d?.length) { save(LS_JOBS, d); setJobsFn(d); broadcast("jobs", d); } }
 
         const token = localStorage.getItem(LS_TOKEN);
-        const usr   = load(LS_USER, null);
+        const usr = load(LS_USER, null);
         if (token && usr) {
           const ep = usr.role === "admin" ? "/apps/all" : "/apps/user";
           const aRes = await fetch(`${API_URL}${ep}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -133,13 +133,13 @@ export default function App() {
       const exists = prev.some(x => x.email === u.email);
       if (exists) return prev;
       return [...prev, {
-        id:     Date.now(),
-        name:   u.name || u.email.split("@")[0],
-        email:  u.email,
-        role:   u.role || "user",
+        id: Date.now(),
+        name: u.name || u.email.split("@")[0],
+        email: u.email,
+        role: u.role || "user",
         status: "Approved",
         joined: new Date().toISOString().split("T")[0],
-        uid:    u.uid || null,
+        uid: u.uid || null,
       }];
     });
 
@@ -165,28 +165,28 @@ export default function App() {
   };
 
   // ── User Management (Admin) ──────────────────────────────────────
-  const updateUserStatus  = (id, status) => setUsers(us => us.map(u => u.id === id ? { ...u, status } : u));
-  const deleteUser        = id           => setUsers(us => us.filter(u => u.id !== id));
-  const resetUserPassword = ()           => toast.add("Password reset email sent to user.", "info");
+  const updateUserStatus = (id, status) => setUsers(us => us.map(u => u.id === id ? { ...u, status } : u));
+  const deleteUser = id => setUsers(us => us.filter(u => u.id !== id));
+  const resetUserPassword = () => toast.add("Password reset email sent to user.", "info");
 
   // ── Job Application (immediate sync to admin) ────────────────────
   const apply = async (data) => {
     const job = jobs.find(j => j.id === data.jobId);
     const newApp = {
-      id:         Date.now(),
-      job_id:     data.jobId,
-      jobId:      data.jobId,
-      jobTitle:   job?.title || data.jobTitle || "Unknown",
-      name:       data.name,
-      email:      data.email,
-      phone:      data.phone,
+      id: Date.now(),
+      job_id: data.jobId,
+      jobId: data.jobId,
+      jobTitle: job?.title || data.jobTitle || "Unknown",
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
       experience: data.exp || "",
-      exp:        data.exp || "",
+      exp: data.exp || "",
       resume_url: data.resume ? (data.resume.name || String(data.resume)) : "",
-      status:     "Applied",
-      timeline:   ["Applied"],
-      tl:         ["Applied"],
-      date:       new Date().toISOString().split("T")[0],
+      status: "Applied",
+      timeline: ["Applied"],
+      tl: ["Applied"],
+      date: new Date().toISOString().split("T")[0],
       applied_at: new Date().toISOString(),
     };
 
@@ -203,7 +203,7 @@ export default function App() {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${tok}` },
         body: JSON.stringify(newApp),
       });
-    } catch {}
+    } catch { }
   };
 
   // ── Status Update (admin → immediately reflects in user view) ────
@@ -219,7 +219,7 @@ export default function App() {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${tok}` },
         body: JSON.stringify({ status, timeline }),
       });
-    } catch {}
+    } catch { }
   };
 
   // ── Job CRUD ─────────────────────────────────────────────────────
@@ -246,13 +246,13 @@ export default function App() {
       <Navbar page={page} nav={nav} user={user} openAuth={m => setAuthMode(m)} doLogout={logout} />
 
       <div style={{ flex: 1 }}>
-        {page === "home"    && <HomePage     jobs={jobs} nav={nav} openAuth={m => setAuthMode(m)} />}
-        {page === "jobs"    && <JobsPage     jobs={jobs} nav={nav} />}
-        {page === "job"     && <JobDetailPage job={selectedJob} nav={nav} onApply={apply} user={user} openAuth={m => setAuthMode(m)} />}
-        {page === "about"   && <AboutPage />}
-        {page === "contact" && <ContactPage  toast={toast} />}
-        {page === "myapps"  && <MyAppsPage   apps={apps.filter(a => a.email === user?.email)} user={user} />}
-        {page === "profile" && <ProfilePage  user={user} onUpdateProfile={updateProfile} toast={toast} />}
+        {page === "home" && <HomePage jobs={jobs} nav={nav} openAuth={m => setAuthMode(m)} />}
+        {page === "jobs" && <JobsPage jobs={jobs} nav={nav} />}
+        {page === "job" && <JobDetailPage job={selectedJob} nav={nav} onApply={apply} user={user} openAuth={m => setAuthMode(m)} />}
+        {page === "about" && <AboutPage />}
+        {page === "contact" && <ContactPage toast={toast} />}
+        {page === "myapps" && <MyAppsPage apps={apps.filter(a => a.email === user?.email)} user={user} />}
+        {page === "profile" && <ProfilePage user={user} onUpdateProfile={updateProfile} toast={toast} />}
 
         {page === "admin" && user?.role === "admin" && (
           <AdminDashboard
