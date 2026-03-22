@@ -1,4 +1,5 @@
 import { T, PHOTOS } from "../data/config";
+import { LogoFull } from "../components/Logo";
 import { useCountUp } from "../hooks/useCountUp";
 import { Btn, Card, Tag } from "../components/UI";
 
@@ -120,10 +121,11 @@ export default function HomePage({ jobs, nav, openAuth }) {
 
       {/* ── PHOTO GALLERY ──────────────────────────────────────────── */}
       <div style={{ padding: "72px 28px", background: T.dark }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <Tag color={T.tealLt} sx={{ background: "rgba(77,182,172,.15)" }}>OUR WORLD</Tag>
-            <h2 className="fade-up" style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(26px,3.5vw,40px)", fontWeight: 800, color: "#fff", margin: "14px 0 10px" }}>Life at Catalyst HR</h2>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{ marginBottom: 16 }}><LogoFull size={48} white /></div>
+            <Tag color="rgba(255,255,255,.9)" sx={{ background: "rgba(255,255,255,.14)", border: "1px solid rgba(255,255,255,.25)", marginBottom: 14 }}>ABOUT US</Tag>
+            <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(30px,5vw,52px)", fontWeight: 800, color: "#fff", margin: "0 0 14px", lineHeight: 1.15 }}>Catalyst HR Solutions</h1>
             <p style={{ color: "rgba(255,255,255,.5)", fontSize: 15 }}>Where talent meets opportunity every day</p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gridTemplateRows: "220px 220px", gap: 14 }}>
@@ -202,6 +204,9 @@ export default function HomePage({ jobs, nav, openAuth }) {
       {/* ── CTA ────────────────────────────────────────────────────── */}
       <div style={{ background: T.dark, padding: "80px 28px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "relative", zIndex: 1, maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+          <div style={{ marginBottom: 24, display: "flex", justifyContent: "center" }}>
+            <LogoFull size={50} white />
+          </div>
           <h2 className="fade-up" style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(26px,4vw,44px)", fontWeight: 800, color: "#fff", margin: "0 0 14px" }}>Ready to Take the Next Step?</h2>
           <p style={{ color: "rgba(255,255,255,.6)", fontSize: 17, marginBottom: 36 }}>Join thousands of professionals who found their dream role through Catalyst HR.</p>
           <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
