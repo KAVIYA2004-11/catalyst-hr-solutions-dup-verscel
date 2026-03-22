@@ -123,7 +123,7 @@ export default function HomePage({ jobs, nav, openAuth }) {
       <div style={{ padding: "72px 28px", background: T.dark }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
           <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ marginBottom: 16 }}><LogoFull size={48} white /></div>
+            <div style={{ marginBottom: 16 }}><LogoFull size={54} white vertical /></div>
             <Tag color="rgba(255,255,255,.9)" sx={{ background: "rgba(255,255,255,.14)", border: "1px solid rgba(255,255,255,.25)", marginBottom: 14 }}>ABOUT US</Tag>
             <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(30px,5vw,52px)", fontWeight: 800, color: "#fff", margin: "0 0 14px", lineHeight: 1.15 }}>Catalyst HR Solutions</h1>
             <p style={{ color: "rgba(255,255,255,.5)", fontSize: 15 }}>Where talent meets opportunity every day</p>
@@ -205,7 +205,7 @@ export default function HomePage({ jobs, nav, openAuth }) {
       <div style={{ background: T.dark, padding: "80px 28px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "relative", zIndex: 1, maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
           <div style={{ marginBottom: 24, display: "flex", justifyContent: "center" }}>
-            <LogoFull size={50} white />
+            <LogoFull size={64} white vertical />
           </div>
           <h2 className="fade-up" style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(26px,4vw,44px)", fontWeight: 800, color: "#fff", margin: "0 0 14px" }}>Ready to Take the Next Step?</h2>
           <p style={{ color: "rgba(255,255,255,.6)", fontSize: 17, marginBottom: 36 }}>Join thousands of professionals who found their dream role through Catalyst HR.</p>

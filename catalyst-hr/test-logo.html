@@ -1,0 +1,13 @@
+<html><body><div id="root"></div><script type="module">
+  import logo from './src/assets/logo.js';
+  const img = document.createElement('img');
+  img.src = logo;
+  img.style.background = '#000'; // Test against dark
+  img.style.padding = '20px';
+  document.getElementById('root').appendChild(img);
+  const img2 = document.createElement('img');
+  img2.src = logo;
+  img2.style.background = '#fff'; // Test against light
+  img2.style.padding = '20px';
+  document.getElementById('root').appendChild(img2);
+</script></body></html>

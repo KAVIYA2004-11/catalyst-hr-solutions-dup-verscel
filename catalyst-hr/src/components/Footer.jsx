@@ -38,7 +38,7 @@ export default function Footer({ nav, onAdminAccess }) {
 
           {/* Brand */}
           <div>
-            <div style={{ marginBottom: 16 }}><LogoFull size={36} white /></div>
+            <div style={{ marginBottom: 16 }}><LogoFull size={38} white vertical /></div>
             <p style={{ color: "rgba(255,255,255,.45)", fontSize: 13, lineHeight: 1.8 }}>
               Bridging talent gaps across Healthcare RCM, IT, Banking &amp; Non-IT domains across India.
             </p>

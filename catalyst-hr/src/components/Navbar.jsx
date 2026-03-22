@@ -29,7 +29,7 @@ export default function Navbar({ page, nav, user, openAuth, doLogout }) {
     }}>
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 28px", display: "flex", alignItems: "center", height: 70, gap: 8 }}>
         <button onClick={() => nav("home")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, marginRight: 24 }}>
-          <LogoFull size={40} vertical={false} />
+          <LogoFull size={34} vertical={false} />
         </button>
 
         {/* Nav Links */}
