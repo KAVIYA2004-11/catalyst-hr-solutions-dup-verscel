@@ -32,8 +32,8 @@ export function CatalystSymbol({ size = 32, white = false }) {
 
 /* ─── FULL LOGO (Symbol + Text) ────────────────────────────── */
 export function LogoFull({ size = 40, white = false, vertical = false }) {
-  const textColor = white ? "#FFFFFF" : T.dark;
-  const subColor = white ? "rgba(255,255,255,0.6)" : T.greyMd;
+  const textColor = white ? "#FFFFFF" : T.teal;
+  const subColor = white ? "rgba(255,255,255,0.6)" : T.teal;
   const symbolSize = vertical ? size * 1.6 : size * 0.9;
 
   return (
